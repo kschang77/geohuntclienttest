@@ -29,22 +29,55 @@
       </div>
       <div class="col">
         <h3>Hints go here</h3>
+
+        <button type="button" class="btn btn-info" onclick=calcDistance()>A little help?</button>
+
       </div>
     </div>
   </div>
   <script>
 
+    function haversine_distance(mk1, mk2) {
+      var R = 3958.8; // Radius of the Earth in miles
+      var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
+      var rlat2 = mk2.lat * (Math.PI / 180); // Convert degrees to radians
+      var difflat = rlat2 - rlat1; // Radian difference (latitudes)
+      var difflon = (mk2.lng - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
+
+      var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat / 2) * Math.sin(difflat / 2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.sin(difflon / 2) * Math.sin(difflon / 2)));
+      return d;
+    }
+
+    const twinPeaks = {
+      lat: 37.7542,
+      lng: -122.4471
+    };
+
+    const sf = { lat: 37.7749, lng: -122.4194 };
+    var curCenter = sf
+
+    function calcDistance() {
+      // const p1 = LatLon.parse(curCenter.lat + "," + curCenter.lng)
+      // const p2 = LatLon.parse(twinPeaks.lat + "," + twinPeaks.lng)
+      // console.log(curCenter)
+      var dist = haversine_distance(curCenter, twinPeaks)
+      console.log(dist)
+      alert("Dist = " + dist)
+    }
 
     function initialize() {
-      const twinPeaks = {
-        lat: 37.7542,
-        lng: -122.4471
-      };
-
-      var sf = { lat: 37.7749, lng: -122.4194 };
+      // var mapOptions = { disableDefaultUI: true}
+      // var sf = { lat: 37.7749, lng: -122.4194 };
       var map = new google.maps.Map(document.getElementById('map'), {
         center: sf,
-        zoom: 16
+        zoom: 16,
+        panControl: false,
+        zoomControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: true,
+        overviewMapControl: false,
+        rotateControl: false
       });
       var panorama = new google.maps.StreetViewPanorama(
         document.getElementById('pano'), {
@@ -57,6 +90,7 @@
       map.setStreetView(panorama);
       panorama.addListener('position_changed', function () {
         map.setCenter(panorama.getPosition());
+        curCenter = map.getCenter().toJSON();
       });
     }
   </script>
