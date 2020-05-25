@@ -30,12 +30,34 @@
       <div class="col">
         <h3>Hints go here</h3>
 
-        <button type="button" class="btn btn-info" onclick=calcDistance()>A little help?</button>
+        <button type="button" class="btn btn-info" onclick=calcDistance()>Distance</button>
 
+        <button type="button" class="btn btn-info" onclick=calcBearing()>Bearing</button>
       </div>
     </div>
   </div>
   <script>
+
+    function calcBearing() {
+
+      start_latitude = curCenter.lat
+      start_longitude = curCenter.lng
+      stop_latitude = twinPeaks.lat
+      stop_longitude = twinPeaks.lng
+
+      var y = Math.sin(stop_longitude - start_longitude) * Math.cos(stop_latitude);
+      var x = Math.cos(start_latitude) * Math.sin(stop_latitude) -
+        Math.sin(start_latitude) * Math.cos(stop_latitude) * Math.cos(stop_longitude - start_longitude);
+      var brng = Math.atan2(y, x) * 180 / Math.PI;
+      // return brng
+      if (brng < 0) {
+        brng += 360
+      }
+
+      console.log(brng)
+      alert("Brng = " + brng)
+
+    }
 
     function haversine_distance(mk1, mk2) {
       var R = 3958.8; // Radius of the Earth in miles
