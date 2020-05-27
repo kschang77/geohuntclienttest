@@ -18,6 +18,8 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
+
+  <!-- <script type="text/javascript" src="target.json"></script> -->
 </head>
 
 <body>
@@ -34,13 +36,31 @@
         <div class="modal-body">
           <p>Welcome to GeoHunt, an online scavenger game.</p>
 
-          <p>With the clues you're given, move "pegman" to the target. When you think you are there, click <span>I found
-              it</span> button. Do it fast, as you are losing points EVERY second. The faster you find the location, the
-            more points you keep. However, if you got it wrong (or not close enough) you get points taken away! </p>
+          <p>Pegman needs to go to the destination, except his 'friends' only gave him hints. Help move "pegman" to the
+            target given the hints/clues available. Once you think he's there, click <span>Arrived (I think)</span>
+            button. Do it fast, as you are losing points EVERY second. The faster you get Pegman there, the more points
+            you keep. However, if you got it wrong (or not close enough) you get points taken away! </p>
 
-          <p>You can drag Pegman around the map, and both streetview and the map will follow. You MUST drag
-            pegman himself. I measure distance of pegman to the target to determine if you're close enough.</p>
+          <p>You can drag Pegman around the map, and both streetview and the map will follow. </p>
 
+          <p>NOTE: You MUST drag pegman himself. You must drop pegman onto one of the blue paths. If you don't, pegman
+            will go back into hiding in the lower-right corner and you have to drag and drop him onto the map again.
+          </p>
+
+          <p>Ready to play? Please select length of your expedition (i.e. how many hunts, max = 5).</p>
+
+          <select id="expeditionLength" name="Length">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <!-- <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option> -->
+          </select>
 
         </div>
         <div class="modal-footer">
@@ -52,7 +72,7 @@
 
   <div class="container-fluid">
     <h2>GeoHunt Prototype</h2>
-    <p>A virtual geographical hunt for targets around the city. (Target is Twin Peaks)</p>
+    <p>A virtual geographical hunt for targets around the city. </p>
   </div>
   <div class="container-fluid">
     <div class="row">
@@ -66,13 +86,15 @@
           <input type="text" id="curScore" />
         </div>
 
-        <h3>Hints go here</h3>
-
-        <button type="button" class="btn btn-danger" onclick=isCloseEnough()>I am here (I think)</button>
+        <button type="button" class="btn btn-danger" onclick=isCloseEnough()>Arrived (I think)</button>
 
         <button type="button" class="btn btn-info" onclick=calcDistance()>Distance</button>
 
         <button type="button" class="btn btn-info" onclick=calcBearing()>Bearing</button>
+        <h3>Hints go here</h3>
+        <div id="hintshere">
+
+        </div>
       </div>
     </div>
   </div>
@@ -81,14 +103,22 @@
     const startScore = 1000;
     const penalty = 100;
     const persecond = 3;
+    const hintfrequency = 6 // per minute
+    var totalScore = 0
     var curScore = startScore
-    var myInterval
+    var scoreInterval, hintInterval, data
+    var curhint = 0;
+    var huntaccuracy
     const twinPeaks = {
       lat: 37.7542,
       lng: -122.4471
     };
 
-    var huntTarget = twinPeaks;
+    // var huntTarget = JSON.parse(target)
+    // console.log(huntTarget)
+
+    // var huntTarget = twinPeaks;
+
 
     function perTick() {
       curScore -= persecond;
@@ -98,17 +128,70 @@
       }
     }
 
+    function perHint() {
+      // just display a hint, watch out so we don't run out of hints, as 0-24 is all we got
+      var existinghint = $("#hintshere").html()
+      if (curhint < 24) {
+        $("#hintshere").html(existinghint + "<p>" + data.clues[curhint] + "</p>");
+        curhint++;
+      }
+    }
+
     function initGame() {
       $("#curScore").val(curScore)
+      // test data, it's supposed to be read from the server
+      data = {
+        "id": 1,
+        "target": "Twin Peaks",
+        "accuracy": 0.025,
+        "clues": [
+          "placeholder1",
+          "placeholder2",
+          "placeholder3",
+          "placeholder4",
+          "placeholder5",
+          "placeholder6",
+          "placeholder7",
+          "placeholder8",
+          "placeholder9",
+          "placeholder10",
+          "placeholder11",
+          "placeholder12",
+          "placeholder13",
+          "placeholder14",
+          "placeholder15",
+          "placeholder16",
+          "placeholder17",
+          "placeholder18",
+          "placeholder19",
+          "placeholder20",
+          "placeholder21",
+          "placeholder22",
+          "placeholder23",
+          "placeholder24",
+          "placeholder25"
+        ],
+        "latlng": {
+          "lat": 37.7542,
+          "lng": -122.4471
+        },
+        "factoid": "Twin Peaks are NOT the tallest hills in San Francisco. At approximately 922 ft tall, they are actually a few feet shorter than Mt. Davidson at 928 ft. The northern peak is called Eureka, and the southern peak is called Noe. ",
+        "photo": "url goes here"
+      }
+      // console.log(data)
+      huntTarget = data.latlng;
+      huntaccuracy = data.accuracy
       initTick();
     }
 
     function initTick() {
-      myInterval = setInterval(perTick, 1000)
+      scoreInterval = setInterval(perTick, 1000)
+      hintInterval = setInterval(perHint, 60 / hintfrequency * 1000)
     }
 
     function clearTick() {
-      clearInterval(myInterval)
+      clearInterval(scoreInterval)
+      clearInterval(hintInterval)
     }
 
     function ranOutfTime() {
@@ -117,10 +200,11 @@
     }
 
     function isCloseEnough() {
-      if (haversine_distance(curCenter, huntTarget) < 0.01) {
+      if (haversine_distance(curCenter, huntTarget) < huntaccuracy) {
         //you found it!!!!!  stop the clock
         clearTick();
         alert("YOU FOUND IT! Your score is " + curScore)
+        alert(data.factoid)
       } else {
         // wah wah wah...
         alert("Sorry, you're not close enough!")
