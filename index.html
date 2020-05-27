@@ -93,6 +93,9 @@
     function perTick() {
       curScore -= persecond;
       $("#curScore").val(curScore);
+      if (curScore <= 0) {
+        ranOutfTime();
+      }
     }
 
     function initGame() {
