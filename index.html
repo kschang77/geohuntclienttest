@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Street View Side-By-Side</title>
+  <title>GeoHunt client</title>
   <style>
     #map,
     #pano {
@@ -23,7 +23,7 @@
 </head>
 
 <body>
-  <div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+  <div class="modal fade" id="myModalIntro" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -72,9 +72,146 @@
     </div>
   </div>
 
+  <div class="modal fade" id="myModalEndExpedition" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Expedition End</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Your GeoHunt expedition has ended.</p>
+
+          <p>Your total score is <span id="mytotalscore">0</span></p>
+
+          <p>over <span id="myexpeditionlength">0</span> hunts</p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalinitGame" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Hunt Starts Now!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you ready...</p>
+
+          <p>for hunt number <span id="mycurrenthunt">0</span></p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Ready!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalranOut" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Out of Time</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <p>Sorry, but you ran out of time.</p>
+
+          <p>Your score for this hunt is 0.</p>
+
+          <p>Your target is: <span id="yourtarget"></span></p>
+
+          <hr />
+
+          <p><b>Fun Trivia: </b><span id="myfactoid"></span></p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Too Bad...</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalfoundit" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Target Found!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <p>You found the target!</p>
+
+          <p>Your score for this hunt is <span id="mycurscore">0</span></p>
+
+          <hr />
+
+          <p><b>Fun Trivia: </b><span id="myfactoid"></span></p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">All right!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModalnotClose" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Not Close Enough</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <p>Sorry, but you are NOT close enough to the target!</p>
+
+          <p>You just suffered a <span id="mypenalty"></span> penalty.</p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Argh!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="container-fluid">
-    <h2>GeoHunt Prototype</h2>
-    <p>A virtual geographical hunt for targets around the city. </p>
+    <div class="row">
+      <div class="col-auto">
+        <h2>GeoHunt Prototype</h2>
+      </div>
+      <div class="col  align-self-center">
+        A virtual geographical hunt for targets around the city.
+      </div>
+    </div>
   </div>
   <div class="container-fluid">
     <div class="row">
@@ -85,9 +222,9 @@
       <div class="col">
         <div class="form-group">
           <label for="curScore">Current Hunt Score: </label>
-          <input type="text" id="curScore" readonly size=5 />
+          <input type="text" id="curScore" readonly size=3 />
           <label for="totalScore">Expedition Score: </label>
-          <input type="text" id="totalScore" readonly size=5 />
+          <input type="text" id="totalScore" readonly size=3 />
         </div>
 
         <button type="button" class="btn btn-danger" onclick=isCloseEnough()>Arrived (I think)</button>
@@ -210,7 +347,7 @@
       curScore -= persecond;
       $("#curScore").val(curScore);
       if (curScore <= 0) {
-        ranOutfTime();
+        ranOutofTime();
       }
     }
 
@@ -233,14 +370,14 @@
     }
 
     function endExpedition() {
-      alert("That's it! Your total score is " + totalScore + " over " + expedition.length + " hunts")
-
-
-
+      // alert("That's it! Your total score is " + totalScore + " over " + expedition.length + " hunts")
+      $('#mytotalscore').html(totalScore.toString())
+      $('myexpeditionlength').html(expedition.length.toString())
+      $('#myModalEndExpedition').modal('show');
     }
 
     function initGame() {
-      console.log("curhunt = ", curhunt)
+      // console.log("curhunt = ", curhunt)
       curScore = 1000;
       $("#curScore").val(curScore)
       // test data, it's supposed to be read from the server
@@ -249,10 +386,14 @@
       huntTarget = data.latlng;
       huntaccuracy = data.accuracy;
       curhint = 0;
+      console.log(data)
       //reset hint area
       $("#hintshere").html("")
+      let t = curhunt + 1
+      $('#mycurrenthunt').html(t.toString())
 
-      alert("Get ready for... Hunt number " + (curhunt + 1) + "!!!!!!")
+      $('#myModalinitGame').modal('show')
+      // alert("Get ready for... Hunt number " + (curhunt + 1) + "!!!!!!")
 
       initTick();
     }
@@ -282,9 +423,12 @@
       clearInterval(hintInterval)
     }
 
-    function ranOutfTime() {
+    function ranOutofTime() {
       clearTick();
-      alert("Sorry, you ran out of time. Your hunt score is ZERO. ")
+      // alert("Sorry, you ran out of time. Your hunt score is ZERO. ")
+      $('#yourtarget').html(data.target)
+      $('#myfactoid').html(data.factoid)
+      $('#myModalranOut').modal('show')
       endHunt();
     }
 
@@ -293,18 +437,22 @@
       if (haversine_distance(curCenter, huntTarget) < huntaccuracy) {
         //you found it!!!!!  stop the clock
         clearTick();
-        alert("YOU FOUND IT! Your hunt score is " + curScore)
+        // alert("YOU FOUND IT! Your hunt score is " + curScore)
         // totalScore += curScore
-        alert(data.factoid)
+        $('#mycurscore').html(curScore.toString())
+        $('#myfactoid').html(data.factoid)
+        $('#myModalfoundit').modal('show')
+        // alert(data.factoid)
         console.log("Yes!")
         endHunt();
       } else {
         // wah wah wah...
-        alert("Sorry, you're not close enough!")
+        // alert("Sorry, you're not close enough!")
+        $('#myModalntClose').modal('show')
         console.log("Nope!")
         curScore -= penalty
         if (curScore < 0) {
-          ranOutfTime();
+          ranOutofTime();
         }
       }
     }
@@ -396,7 +544,7 @@
   <script>
     $(window).on('load', function () {
       //display the "intro" modal
-      $('#myModal').modal('show');
+      $('#myModalIntro').modal('show');
 
     });
   </script>
