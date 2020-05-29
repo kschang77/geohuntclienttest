@@ -8,7 +8,7 @@
     #map,
     #pano {
       /* float: left; */
-      height: 400px;
+      height: 500px;
       width: 100%;
     }
   </style>
@@ -28,7 +28,7 @@
 <body>
   <div class="modal fade" id="myModalIntro" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">GeoHunt (Prototype)</h5>
@@ -106,9 +106,9 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">Begin Hunt</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
-          </button>
+          </button> -->
         </div>
         <div class="modal-body">
           <p>Are you ready...</p>
@@ -117,7 +117,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-dismiss="modal">Ready!</button>
+          <button type="button" class="btn btn-success" onclick=initTick() data-dismiss="modal">Ready!</button>
         </div>
       </div>
     </div>
@@ -180,7 +180,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-dismiss="modal">All right!</button>
+          <button type="button" class="btn btn-success" onClick=endHunt(); data-dismiss="modal">All right!</button>
         </div>
       </div>
     </div>
@@ -230,7 +230,7 @@
       <div class="col">
         <div class="form-group">
           <label for="curScore">Current Hunt Score: </label>
-          <input type="text" id="curScore" readonly size=3 />
+          <input type="text" id="curScore" readonly size=3 />&nbsp;
           <label for="totalScore">Expedition Score: </label>
           <input type="text" id="totalScore" readonly size=3 />
         </div>
@@ -361,6 +361,14 @@
       }
     }
 
+    function initHint() {
+      //pre-display X hints where x=2 
+      $("#hintshere").html(
+        "<p>" + data.clues[0] + "</p>" +
+        "<p>" + data.clues[1] + "</p>");
+      curhint = 2
+    }
+
     function perHint() {
       // just display a hint, watch out so we don't run out of hints, as 0-24 is all we got
       var existinghint = $("#hintshere").html()
@@ -381,13 +389,16 @@
 
     function endExpedition() {
       // alert("That's it! Your total score is " + totalScore + " over " + expedition.length + " hunts")
+      let el = expedition.length
       $('#mytotalscore').html(totalScore.toString())
-      $('myexpeditionlength').html(expedition.length.toString())
+      $('#myexpeditionlength').html(el.toString())
       $('#myModalEndExpedition').modal('show');
     }
 
     function initGame() {
       // console.log("curhunt = ", curhunt)
+      // console.log("expedition length = " + expedition.length.toString())
+
       curScore = 1000;
       $("#curScore").val(curScore)
       // test data, it's supposed to be read from the server
@@ -405,7 +416,7 @@
       $('#myModalinitGame').modal('show')
       // alert("Get ready for... Hunt number " + (curhunt + 1) + "!!!!!!")
 
-      initTick();
+      // initTick();
     }
 
     function endHunt() {
@@ -423,6 +434,7 @@
 
     function initTick() {
       console.log('Starting ticks')
+      initHint();
       scoreInterval = setInterval(perTick, 1000)
       hintInterval = setInterval(perHint, 60 / hintfrequency * 1000)
     }
@@ -457,11 +469,11 @@
         $('#myModalfoundit').modal('show')
         // alert(data.factoid)
         console.log("Yes!")
-        endHunt();
+        // endHunt();
       } else {
         // wah wah wah...
         // alert("Sorry, you're not close enough!")
-        $('#myModalntClose').modal('show')
+        $('#myModalnotClose').modal('show')
         console.log("Nope!")
         curScore -= penalty
         if (curScore < 0) {
@@ -485,10 +497,13 @@
       if (brng < 0) {
         brng += 360
       }
-
       console.log(brng)
-      alert("Brng = " + brng)
 
+      dir = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"]
+      brng2 = (brng - 22.5) / 45
+
+      // alert("Brng2 = " + brng2 + " / " + dir[Math.ceil(brng2)])
+      alert("Your target is to the " + dir[Math.ceil(brng2)])
     }
 
     function haversine_distance(mk1, mk2) {
@@ -511,7 +526,8 @@
       // console.log(curCenter)
       var dist = haversine_distance(curCenter, huntTarget)
       console.log(dist)
-      alert("Dist = " + dist)
+      let dist2 = dist.toPrecision(1);
+      alert("Dist = " + dist2)
     }
 
     function initialize() {
@@ -526,7 +542,8 @@
         scaleControl: false,
         streetViewControl: true,
         overviewMapControl: false,
-        rotateControl: false
+        rotateControl: false,
+        scrollWheel: true,
       });
       map.addListener('position_changed', function () {
         panorama.setPosition(map.getCenter());
